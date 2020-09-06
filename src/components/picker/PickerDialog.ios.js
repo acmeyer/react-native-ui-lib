@@ -18,20 +18,22 @@ class PickerDialog extends BaseComponent {
     onDone: PropTypes.func,
     onCancel: PropTypes.func,
     topBarProps: PropTypes.object,
-    children: PropTypes.array
+    children: PropTypes.array,
+    selectLabelStyle: PropTypes.object,
+    cancelLabelStyle: PropTypes.object,
   };
 
   state = {};
 
   renderHeader() {
-    const {onDone, onCancel, topBarProps} = this.props;
+    const {onDone, onCancel, topBarProps, cancelLabelStyle, selectLabelStyle} = this.props;
 
     return (
-      <View style={styles.header}>
-        <Text text70 blue30 onPress={onCancel} accessibilityRole={onCancel ? 'button' : undefined}>
+      <View style={[styles.header, topBarProps.style]}>
+        <Text text70 blue30 onPress={onCancel} accessibilityRole={onCancel ? 'button' : undefined} style={cancelLabelStyle}>
           {_.get(topBarProps, 'cancelLabel', 'Cancel')}
         </Text>
-        <Text text70 blue30 onPress={onDone} accessibilityRole={onDone ? 'button' : undefined}>
+        <Text text70 blue30 onPress={onDone} accessibilityRole={onDone ? 'button' : undefined} style={selectLabelStyle}>
           {_.get(topBarProps, 'doneLabel', 'Done')}
         </Text>
       </View>
