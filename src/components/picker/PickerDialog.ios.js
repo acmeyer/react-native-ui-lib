@@ -14,6 +14,7 @@ class PickerDialog extends BaseComponent {
   static displayName = 'IGNORE';
   static propTypes = {
     selectedValue: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    wheelPickerProps: PropTypes.object,
     onValueChange: PropTypes.func,
     onDone: PropTypes.func,
     onCancel: PropTypes.func,
@@ -41,12 +42,12 @@ class PickerDialog extends BaseComponent {
   }
 
   renderPicker() {
-    const {children, onValueChange, selectedValue, renderNativePicker} = this.props;
+    const {children, onValueChange, selectedValue, renderNativePicker, wheelPickerProps} = this.props;
     if (_.isFunction(renderNativePicker)) {
       return renderNativePicker(this.props);
     }
     return (
-      <WheelPicker onValueChange={onValueChange} selectedValue={selectedValue}>
+      <WheelPicker onValueChange={onValueChange} selectedValue={selectedValue} {...wheelPickerProps}>
         {children}
       </WheelPicker>
     );
