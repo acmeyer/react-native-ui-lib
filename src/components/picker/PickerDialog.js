@@ -59,7 +59,7 @@ class PickerDialog extends BaseComponent {
       <Dialog {...dialogProps} height={250} width="100%" migrate bottom animationConfig={{duration: 300}}>
         <View flex bg-white>
           {this.renderHeader()}
-          <View centerV flex>
+          <View centerV centerH flex>
             {this.renderPicker()}
           </View>
         </View>
