@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Platform} from 'react-native';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
@@ -59,7 +59,7 @@ class PickerDialog extends BaseComponent {
       <Dialog {...dialogProps} height={250} width="100%" migrate bottom animationConfig={{duration: 300}}>
         <View flex bg-white>
           {this.renderHeader()}
-          <View centerV centerH flex>
+          <View style={styles.pickerContainer}>
             {this.renderPicker()}
           </View>
         </View>
@@ -76,7 +76,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center'
-  }
+  },
+  pickerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    ...Platform.select({
+      android: {
+        alignItems: 'center',
+      },
+    }),
+  },
 });
 
 export default PickerDialog;
