@@ -1,9 +1,10 @@
 import {useCallback, useState, useEffect, useMemo} from 'react';
 import {TextInputProps} from 'react-native';
 import _ from 'lodash';
-import validators from './validators';
+import * as Presenter from './Presenter';
+import {useDidUpdate} from '../../hooks';
+import {Validator} from './types';
 
-export type Validator = Function | keyof typeof validators;
 
 export interface FieldStateProps extends TextInputProps {
   validateOnStart?: boolean;
@@ -13,6 +14,10 @@ export interface FieldStateProps extends TextInputProps {
    * A single or multiple validator. Can be a string (required, email) or custom function.
    */
   validate?: Validator | Validator[];
+  /**
+   * Callback for when field validity has changed
+   */
+  onChangeValidity?: (isValid: boolean) => void
 }
 
 export default function useFieldState({
@@ -20,11 +25,13 @@ export default function useFieldState({
   validateOnBlur,
   validateOnChange,
   validateOnStart,
+  onChangeValidity,
   ...props
 }: FieldStateProps) {
   const [value, setValue] = useState(props.value);
   const [isFocused, setIsFocused] = useState(false);
   const [isValid, setIsValid] = useState(true);
+  const [failingValidatorIndex, setFailingValidatorIndex] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     if (validateOnStart) {
@@ -32,54 +39,46 @@ export default function useFieldState({
     }
   }, []);
 
-  const validateField = useCallback(
-    (valueToValidate = value) => {
-      let _isValid = true;
-      if (_.isFunction(validate)) {
-        _isValid = validate(valueToValidate);
-      } else if (_.isString(validate)) {
-        _isValid = _.invoke(validators, validate, valueToValidate);
-      }
+  useDidUpdate(() => {
+    onChangeValidity?.(isValid);
+  }, [isValid]);
 
-      setIsValid(_isValid);
-    },
-    [value, validate]
-  );
+  const validateField = useCallback((valueToValidate = value) => {
+    const [_isValid, _failingValidatorIndex] = Presenter.validate(valueToValidate, validate);
 
-  const onFocus = useCallback(
-    (...args: any) => {
-      setIsFocused(true);
-      _.invoke(props, 'onFocus', ...args);
-    },
-    [props.onFocus]
-  );
+    setIsValid(_isValid);
+    setFailingValidatorIndex(_failingValidatorIndex);
+  },
+  [value, validate]);
 
-  const onBlur = useCallback(
-    (...args: any) => {
-      setIsFocused(false);
-      _.invoke(props, 'onBlur', ...args);
-      if (validateOnBlur) {
-        validateField();
-      }
-    },
-    [props.onBlur, validateOnBlur, validateField]
-  );
+  const onFocus = useCallback((...args: any) => {
+    setIsFocused(true);
+    _.invoke(props, 'onFocus', ...args);
+  },
+  [props.onFocus]);
 
-  const onChangeText = useCallback(
-    (text) => {
-      setValue(text);
-      _.invoke(props, 'onChangeText', text);
+  const onBlur = useCallback((...args: any) => {
+    setIsFocused(false);
+    _.invoke(props, 'onBlur', ...args);
+    if (validateOnBlur) {
+      validateField();
+    }
+  },
+  [props.onBlur, validateOnBlur, validateField]);
 
-      if (validateOnChange) {
-        validateField(text);
-      }
-    },
-    [props.onChangeText, validateOnChange, validateField]
-  );
+  const onChangeText = useCallback(text => {
+    setValue(text);
+    _.invoke(props, 'onChangeText', text);
+
+    if (validateOnChange) {
+      validateField(text);
+    }
+  },
+  [props.onChangeText, validateOnChange, validateField]);
 
   const fieldState = useMemo(() => {
-    return {value, hasValue: !_.isEmpty(value), isValid, isFocused};
-  }, [value, isFocused, isValid]);
+    return {value, hasValue: !_.isEmpty(value), isValid, isFocused, failingValidatorIndex};
+  }, [value, isFocused, isValid, failingValidatorIndex]);
 
   return {
     onFocus,

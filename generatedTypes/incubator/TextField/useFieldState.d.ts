@@ -1,6 +1,5 @@
 import { TextInputProps } from 'react-native';
-import validators from './validators';
-export declare type Validator = Function | keyof typeof validators;
+import { Validator } from './types';
 export interface FieldStateProps extends TextInputProps {
     validateOnStart?: boolean;
     validateOnChange?: boolean;
@@ -9,8 +8,12 @@ export interface FieldStateProps extends TextInputProps {
      * A single or multiple validator. Can be a string (required, email) or custom function.
      */
     validate?: Validator | Validator[];
+    /**
+     * Callback for when field validity has changed
+     */
+    onChangeValidity?: (isValid: boolean) => void;
 }
-export default function useFieldState({ validate, validateOnBlur, validateOnChange, validateOnStart, ...props }: FieldStateProps): {
+export default function useFieldState({ validate, validateOnBlur, validateOnChange, validateOnStart, onChangeValidity, ...props }: FieldStateProps): {
     onFocus: (...args: any) => void;
     onBlur: (...args: any) => void;
     onChangeText: (text: any) => void;
@@ -19,5 +22,6 @@ export default function useFieldState({ validate, validateOnBlur, validateOnChan
         hasValue: boolean;
         isValid: boolean;
         isFocused: boolean;
+        failingValidatorIndex: number | undefined;
     };
 };

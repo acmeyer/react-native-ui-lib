@@ -1,9 +1,15 @@
 import React, {PureComponent} from 'react';
-import {View as RNView, SafeAreaView, Animated, ViewProps, StyleProp, ViewStyle} from 'react-native';
-import {asBaseComponent, forwardRef, BaseComponentInjectedProps, ForwardRefInjectedProps, ContainerModifiers} from '../../commons/new';
+import {View as RNView, SafeAreaView, Animated, ViewProps as RNViewProps, StyleProp, ViewStyle} from 'react-native';
+import {
+  asBaseComponent,
+  forwardRef,
+  BaseComponentInjectedProps,
+  ForwardRefInjectedProps,
+  ContainerModifiers
+} from '../../commons/new';
 import Constants from '../../helpers/Constants';
 
-export interface ViewPropTypes extends Omit<ViewProps, 'style'>, ContainerModifiers {
+export interface ViewProps extends Omit<RNViewProps, 'style'>, ContainerModifiers {
   /**
    * If true, will render as SafeAreaView
    */
@@ -32,9 +38,11 @@ export interface ViewPropTypes extends Omit<ViewProps, 'style'>, ContainerModifi
    * Set background color
    */
   backgroundColor?: string;
-  style?: StyleProp<ViewStyle> | Animated.AnimatedProps<StyleProp<ViewStyle>>;
+  style?: StyleProp<ViewStyle | Animated.AnimatedProps<ViewStyle>>;
 }
-type PropsTypes = BaseComponentInjectedProps & ForwardRefInjectedProps & ViewPropTypes;
+export type ViewPropTypes = ViewProps; //TODO: remove after ComponentPropTypes deprecation;
+
+type PropsTypes = BaseComponentInjectedProps & ForwardRefInjectedProps & ViewProps;
 
 interface ViewState {
   ready: boolean;
@@ -88,11 +96,13 @@ class View extends PureComponent<PropsTypes, ViewState> {
     const {
       modifiers,
       style,
+      /* eslint-disable */
       left,
       top,
       right,
       bottom,
       flex: propsFlex,
+      /* eslint-enable */
       forwardedRef,
       inaccessible,
       ...others
@@ -122,4 +132,4 @@ class View extends PureComponent<PropsTypes, ViewState> {
   }
 }
 
-export default asBaseComponent<ViewPropTypes>(forwardRef(View));
+export default asBaseComponent<ViewProps>(forwardRef(View));

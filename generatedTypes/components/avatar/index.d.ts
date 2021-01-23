@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import { ImageSourcePropType, StyleProp, ViewStyle, ImagePropsBase, ImageStyle, TextStyle } from 'react-native';
+import { BadgeProps } from '../badge';
 import { ImageProps } from '../image';
 export declare enum StatusModes {
     ONLINE = "ONLINE",
@@ -13,7 +14,7 @@ export declare enum BadgePosition {
     BOTTOM_RIGHT = "BOTTOM_RIGHT",
     BOTTOM_LEFT = "BOTTOM_LEFT"
 }
-export declare type AvatarPropTypes = {
+export declare type AvatarProps = {
     /**
      * Adds fade in animation when Avatar image loads
      */
@@ -29,7 +30,7 @@ export declare type AvatarPropTypes = {
     /**
      * Badge props passed down to Badge component
      */
-    badgeProps?: object;
+    badgeProps?: BadgeProps;
     /**
      * Additional spacing styles for the container
      */
@@ -51,17 +52,17 @@ export declare type AvatarPropTypes = {
      * Listener-callback for when an image's (uri) loading
      * starts (equiv. to Image.onLoadStart()).
      */
-    onImageLoadStart?: ImagePropsBase["onLoadStart"];
+    onImageLoadStart?: ImagePropsBase['onLoadStart'];
     /**
      * Listener-callback for when an image's (uri) loading
      * either succeeds or fails (equiv. to Image.onLoadEnd()).
      */
-    onImageLoadEnd?: ImagePropsBase["onLoadEnd"];
+    onImageLoadEnd?: ImagePropsBase['onLoadEnd'];
     /**
      * Listener-callback for when an image's (uri) loading
      * fails (equiv. to Image.onError()).
      */
-    onImageLoadError?: ImagePropsBase["onError"];
+    onImageLoadError?: ImagePropsBase['onError'];
     /**
      * Label that can represent initials
      */
@@ -107,6 +108,7 @@ export declare type AvatarPropTypes = {
      */
     testID?: string;
 };
+export declare type AvatarPropTypes = AvatarProps;
 /**
  * @description: Avatar component for displaying user profile images
  * @extends: TouchableOpacity
@@ -115,9 +117,9 @@ export declare type AvatarPropTypes = {
  * @image: https://user-images.githubusercontent.com/33805983/34480603-197d7f64-efb6-11e7-9feb-db8ba756f055.png
  * @example: https://github.com/wix/react-native-ui-lib/blob/master/demo/src/screens/componentScreens/AvatarsScreen.js
  */
-declare class Avatar extends PureComponent<AvatarPropTypes> {
+declare class Avatar extends PureComponent<AvatarProps> {
     styles: ReturnType<typeof createStyles>;
-    constructor(props: AvatarPropTypes);
+    constructor(props: AvatarProps);
     static displayName: string;
     static modes: typeof StatusModes;
     static badgePosition: typeof BadgePosition;
@@ -134,17 +136,14 @@ declare class Avatar extends PureComponent<AvatarPropTypes> {
     getStatusBadgeColor(status: StatusModes | undefined): string | null;
     getBadgeBorderWidth: () => any;
     getBadgeColor(): any;
-    getBadgeSize: () => any;
-    getBadgePosition(): {
-        [x: string]: string | number;
-        position: string;
-    };
+    getBadgeSize: () => number;
+    getBadgePosition: () => object;
     renderBadge(): JSX.Element | undefined;
     renderRibbon(): JSX.Element | undefined;
     renderImage(): JSX.Element | undefined;
     render(): JSX.Element;
 }
-declare function createStyles(props: AvatarPropTypes): {
+declare function createStyles(props: AvatarProps): {
     initialsContainerWithInset: {
         top: number;
         right: number;
@@ -154,6 +153,7 @@ declare function createStyles(props: AvatarPropTypes): {
     initials: {
         color: string | undefined;
         backgroundColor: string;
+        lineHeight: undefined;
     };
     ribbon: {
         backgroundColor: string;
@@ -162,7 +162,7 @@ declare function createStyles(props: AvatarPropTypes): {
     };
 };
 export { Avatar };
-declare const _default: React.ComponentClass<AvatarPropTypes & {
+declare const _default: React.ComponentClass<AvatarProps & {
     useCustomTheme?: boolean | undefined;
 }, any> & typeof Avatar;
 export default _default;
